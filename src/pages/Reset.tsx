@@ -68,7 +68,7 @@ const Reset: React.FC = () => {
                 <h1 className="text-3xl font-bold mb-10">Set New Password</h1>
 
                 <input
-                  className="border p-2 w-96 rounded-lg"
+                  className="border p-2 w-full rounded-lg"
                   type="password"
                   placeholder="New password"
                   value={password}

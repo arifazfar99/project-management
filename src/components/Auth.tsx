@@ -27,7 +27,7 @@ const Auth = ({ onAuth }: { onAuth: () => void }) => {
 
   return (
     <div className="flex flex-col justify-center items-center h-screen bg-purple-100">
-      <div className="bg-white rounded-md p-5 shadow">
+      <div className="bg-white rounded-md p-5 shadow sm:min-w-[500px]">
         <section className="flex justify-center">
           <img src="/images/planit-2.png" alt="PlanIt Logo" width={300} />
         </section>
@@ -37,13 +37,13 @@ const Auth = ({ onAuth }: { onAuth: () => void }) => {
               {isSignup ? "Create New Account" : "Account Login"}
             </h1>
             <input
-              className="border p-2 w-96 rounded-lg"
+              className="border p-2 w-full rounded-lg"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
             <input
-              className="border p-2 w-96 rounded-lg"
+              className="border p-2 w-full rounded-lg"
               type="password"
               placeholder="Password"
               value={password}

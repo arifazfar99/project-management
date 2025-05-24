@@ -29,7 +29,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ onBack }) => {
     <div className="flex flex-col items-center space-y-4 p-4">
       <h1 className="text-3xl font-bold mb-10">Reset Password</h1>
       <input
-        className="border p-2 w-96 rounded-lg"
+        className="border p-2 w-full rounded-lg"
         placeholder="Your email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
