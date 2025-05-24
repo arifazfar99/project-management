@@ -21,7 +21,7 @@ const Column: React.FC<ColumnProps> = ({
 }) => {
   const { setNodeRef } = useDroppable({ id });
 
-  const baseStyle = "rounded-xl w-100 p-4 min-h-[500px]";
+  const baseStyle = "rounded-xl w-64 sm:w-100 p-4 min-h-[600px] flex-shrink-0";
 
   let colorStyle = "bg-slate-100 text-slate-700 border border-slate-300 ";
   if (id === "inprogress") {

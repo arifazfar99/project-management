@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { supabase } from "./utils/supabaseClient";
 
 import Board from "./components/Board";
 import Auth from "./components/Auth";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Reset from "./pages/Reset";
 
 const App: React.FC = () => {
   const [user, setUser] = useState<any>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getUser = async () => {
@@ -26,17 +29,31 @@ const App: React.FC = () => {
 
   return (
     <>
-      {user ? (
-        <div className="min-h-screen flex flex-col">
-          <Header email={user.email} onLogout={() => setUser(null)} />
-          <main className="mx-auto p-6 flex-grow">
-            <Board />
-          </main>
-          <Footer />
-        </div>
-      ) : (
-        <Auth onAuth={() => location.reload()} />
-      )}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            user ? (
+              <div className="min-h-screen flex flex-col">
+                <Header email={user.email} onLogout={() => setUser(null)} />
+                <main className="flex-grow bg-purple-100 p-4">
+                  <Board />
+                </main>
+                <Footer />
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            !user ? <Auth onAuth={() => navigate("/")} /> : <Navigate to="/" />
+          }
+        />
+        <Route path="/reset" element={<Reset />} />
+      </Routes>
     </>
   );
 };

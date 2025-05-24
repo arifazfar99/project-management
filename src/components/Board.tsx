@@ -13,6 +13,7 @@ import type { Task } from "../types";
 import Column from "./Column";
 import TaskCard from "./TaskCard";
 import AnimeModal from "./TaskModal";
+import { PlusOutlined } from "@ant-design/icons";
 
 const Board: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -126,36 +127,46 @@ const Board: React.FC = () => {
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
     >
-      <div className="flex justify-end px-6">
-        <Button type="primary" onClick={handleOpenNew}>
-          Add New Task
+      <div className="flex justify-end">
+        <Button
+          type="primary"
+          size="large"
+          variant="solid"
+          color="purple"
+          shape="default"
+          onClick={handleOpenNew}
+          icon={<PlusOutlined />}
+        >
+          New Task
         </Button>
       </div>
-      <div className="p-6 flex gap-6 overflow-x-auto h-full justify-center">
-        <Column
-          key={"todo"}
-          id={"todo"}
-          title="To Do"
-          tasks={columns.todo}
-          onTaskClick={handleEdit}
-          OnTaskDelete={handleDelete}
-        />
-        <Column
-          key={"inprogress"}
-          id={"inprogress"}
-          title="In Progress"
-          tasks={columns.inprogress}
-          onTaskClick={handleEdit}
-          OnTaskDelete={handleDelete}
-        />
-        <Column
-          key={"completed"}
-          id={"completed"}
-          title="Completed"
-          tasks={columns.completed}
-          onTaskClick={handleEdit}
-          OnTaskDelete={handleDelete}
-        />
+      <div className="p-4 sm:p-6 flex gap-4 sm:gap-6 overflow-x-auto h-full">
+        <div className="flex min-w-[768px] sm:min-w-full gap-4 sm:gap-6 sm:justify-center">
+          <Column
+            key={"todo"}
+            id={"todo"}
+            title="To Do"
+            tasks={columns.todo}
+            onTaskClick={handleEdit}
+            OnTaskDelete={handleDelete}
+          />
+          <Column
+            key={"inprogress"}
+            id={"inprogress"}
+            title="In Progress"
+            tasks={columns.inprogress}
+            onTaskClick={handleEdit}
+            OnTaskDelete={handleDelete}
+          />
+          <Column
+            key={"completed"}
+            id={"completed"}
+            title="Completed"
+            tasks={columns.completed}
+            onTaskClick={handleEdit}
+            OnTaskDelete={handleDelete}
+          />
+        </div>
       </div>
 
       <DragOverlay>

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../utils/supabaseClient";
+import { Button } from "antd";
+import ResetPassword from "./ResetPassword";
 
 const Auth = ({ onAuth }: { onAuth: () => void }) => {
   const [email, setEmail] = useState("");
@@ -7,6 +9,7 @@ const Auth = ({ onAuth }: { onAuth: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
   const [error, setError] = useState("");
+  const [resetMode, setResetMode] = useState(false);
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -16,45 +19,86 @@ const Auth = ({ onAuth }: { onAuth: () => void }) => {
       ? await supabase.auth.signUp({ email, password })
       : await supabase.auth.signInWithPassword({ email, password });
 
-    if (error) setError(error.message);
+    if (error) setError("Missing email or password");
     else onAuth();
 
     setLoading(false);
   };
 
   return (
-    <div className="flex flex-col items-center h-screen">
-      <img src="/images/planit.png" alt="PlanIt Logo" width={400} />
-      <section className="flex flex-col items-center space-y-4 rounded-lg shadow p-4 bg-amber-50">
-        <h1 className="text-2xl font-bold">{isSignup ? "Sign Up" : "Login"}</h1>
-        <input
-          className="border p-2 w-64 rounded"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className="border p-2 w-64 rounded"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        {error && <p className="text-red-500">{error}</p>}
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded cursor-pointer"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading ? "Loading..." : isSignup ? "Sign Up" : "Login"}
-        </button>
-        <button
-          className="text-sm text-gray-500 cursor-pointer"
-          onClick={() => setIsSignup(!isSignup)}
-        >
-          {isSignup ? "Already have an account? Login" : "New here? Sign up"}
-        </button>
-      </section>
+    <div className="flex flex-col justify-center items-center h-screen bg-purple-100">
+      <div className="bg-white rounded-md p-5 shadow">
+        <section className="flex justify-center">
+          <img src="/images/planit-2.png" alt="PlanIt Logo" width={300} />
+        </section>
+        {!resetMode ? (
+          <section className="flex flex-col items-center space-y-4 p-4">
+            <h1 className="text-3xl font-bold mb-10">
+              {isSignup ? "Create New Account" : "Account Login"}
+            </h1>
+            <input
+              className="border p-2 w-96 rounded-lg"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              className="border p-2 w-96 rounded-lg"
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {error && <p className="text-red-500">{error}</p>}
+            <Button
+              block
+              type="primary"
+              size="large"
+              variant="solid"
+              color="purple"
+              shape="default"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : isSignup ? "Sign Up" : "Login"}
+            </Button>
+            {isSignup ? (
+              <p>
+                Already have an account?{" "}
+                <span
+                  onClick={() => setIsSignup(!isSignup)}
+                  className="text-purple-700 hover:underline cursor-pointer"
+                >
+                  Login
+                </span>
+              </p>
+            ) : (
+              <p className="mb-0">
+                Doesn't have an account?{" "}
+                <span
+                  onClick={() => setIsSignup(!isSignup)}
+                  className="text-purple-700 hover:underline cursor-pointer"
+                >
+                  Sign Up
+                </span>
+              </p>
+            )}
+            {!isSignup && (
+              <p>
+                Forgot{" "}
+                <span
+                  onClick={() => setResetMode(true)}
+                  className="text-purple-700 hover:underline cursor-pointer"
+                >
+                  Password?
+                </span>
+              </p>
+            )}
+          </section>
+        ) : (
+          <ResetPassword onBack={() => setResetMode(false)} />
+        )}
+      </div>
     </div>
   );
 };
