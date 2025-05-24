@@ -22,7 +22,7 @@ const Reset: React.FC = () => {
 
   const handleNavigate = async () => {
     await supabase.auth.signOut();
-    navigate("/login");
+    navigate("/");
   };
 
   useEffect(() => {
@@ -30,7 +30,7 @@ const Reset: React.FC = () => {
       const { data } = await supabase.auth.getUser();
 
       if (!data.user) {
-        navigate("/login");
+        navigate("/");
       } else {
         setUser(data.user);
       }

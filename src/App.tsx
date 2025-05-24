@@ -33,6 +33,16 @@ const App: React.FC = () => {
         <Route
           path="/"
           element={
+            !user ? (
+              <Auth onAuth={() => navigate("/home")} />
+            ) : (
+              <Navigate to="/home" />
+            )
+          }
+        />
+        <Route
+          path="/home"
+          element={
             user ? (
               <div className="min-h-screen flex flex-col">
                 <Header email={user.email} onLogout={() => setUser(null)} />
@@ -42,16 +52,11 @@ const App: React.FC = () => {
                 <Footer />
               </div>
             ) : (
-              <Navigate to="/login" />
+              <Navigate to="/" />
             )
           }
         />
-        <Route
-          path="/login"
-          element={
-            !user ? <Auth onAuth={() => navigate("/")} /> : <Navigate to="/" />
-          }
-        />
+
         <Route path="/reset" element={<Reset />} />
       </Routes>
     </>
