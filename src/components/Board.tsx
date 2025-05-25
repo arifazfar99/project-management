@@ -7,20 +7,22 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import { supabase } from "../utils/supabaseClient";
-import { Button, Modal } from "antd";
+import { Button, Modal, Spin } from "antd";
 
 import type { Task } from "../types";
 import Column from "./Column";
 import TaskCard from "./TaskCard";
-import AnimeModal from "./TaskModal";
 import { PlusOutlined } from "@ant-design/icons";
+import TaskModal from "./TaskModal";
 
 const Board: React.FC = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+
+  const isGuest = localStorage.getItem("isGuest") === "true";
 
   const handleOpenNew = () => {
     setActiveTask(null);
@@ -33,16 +35,22 @@ const Board: React.FC = () => {
   };
 
   const handleSave = async (task: Task) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    let userId: string | null = null;
+
+    if (!isGuest) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      userId = user?.id ?? null;
+    }
 
     if (task.id && tasks.some((t) => t.id === task.id)) {
       await supabase.from("tasks").update(task).eq("id", task.id);
     } else {
       await supabase.from("tasks").insert({
         ...task,
-        user_id: user?.id,
+        user_id: userId,
       });
     }
 
@@ -102,24 +110,42 @@ const Board: React.FC = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      setLoading(true);
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      const { data, error } = await supabase
-        .from("tasks")
-        .select("*")
-        .eq("user_id", user?.id)
-        .order("createdAt");
+      let userId: string | null = null;
 
-      if (error)
-        console.error("Fetch error:", console.error("Fetch error:", error));
-      else setTasks(data as Task[]);
+      setLoading(true);
+
+      if (!isGuest) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+
+        userId = user?.id ?? null;
+      }
+
+      const query = supabase.from("tasks").select("*").order("createdAt");
+
+      const { data, error } = isGuest
+        ? await query.is("user_id", null)
+        : await query.eq("user_id", userId);
+
+      if (error) {
+        console.error("Fetch error:", error);
+      } else {
+        setTasks(data as Task[]);
+      }
+
       setLoading(false);
     };
 
     fetchTasks();
-  }, []);
+  }, [isGuest]);
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <DndContext
@@ -179,7 +205,7 @@ const Board: React.FC = () => {
         onCancel={() => setModalOpen(false)}
         footer={null}
       >
-        <AnimeModal
+        <TaskModal
           isOpen={modalOpen}
           onClose={() => setModalOpen(false)}
           onSave={handleSave}

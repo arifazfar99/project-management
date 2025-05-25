@@ -8,7 +8,7 @@ interface TaskModalProps {
   initialTask?: Task | null;
 }
 
-const AnimeModal: React.FC<TaskModalProps> = ({
+const TaskModal: React.FC<TaskModalProps> = ({
   isOpen,
   onClose,
   onSave,
@@ -17,7 +17,9 @@ const AnimeModal: React.FC<TaskModalProps> = ({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [assignedTo, setAssignedTo] = useState("");
-  const [dueDate, setDueDate] = useState("");
+  const [dueDate, setDueDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [status, setStatus] = useState<"todo" | "inprogress" | "completed">(
     "todo"
   );
@@ -42,12 +44,6 @@ const AnimeModal: React.FC<TaskModalProps> = ({
       setAssignedTo(initialTask.assignedTo || "");
       setDueDate(initialTask.dueDate || "");
       setStatus(initialTask.status);
-    } else {
-      setTitle("");
-      setDescription("");
-      setAssignedTo("");
-      setDueDate("");
-      setStatus("todo");
     }
   }, [initialTask]);
 
@@ -110,4 +106,4 @@ const AnimeModal: React.FC<TaskModalProps> = ({
   );
 };
 
-export default AnimeModal;
+export default TaskModal;

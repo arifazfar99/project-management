@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { supabase } from "../utils/supabaseClient";
+import { toast } from "react-toastify";
+
 import { Button } from "antd";
 import ResetPassword from "./ResetPassword";
 
@@ -15,12 +17,29 @@ const Auth = ({ onAuth }: { onAuth: () => void }) => {
     setLoading(true);
     setError("");
 
-    const { error } = isSignup
-      ? await supabase.auth.signUp({ email, password })
-      : await supabase.auth.signInWithPassword({ email, password });
+    if (isSignup) {
+      const { error } = await supabase.auth.signUp({ email, password });
 
-    if (error) setError("Missing email or password");
-    else onAuth();
+      if (error) {
+        setError("Signup failed. " + error.message);
+      } else {
+        toast.success(
+          "Signup successful. Please check your email to confirm your account."
+        );
+        onAuth();
+      }
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setError("Login failed. " + error.message);
+      } else {
+        onAuth();
+      }
+    }
 
     setLoading(false);
   };
@@ -61,6 +80,20 @@ const Auth = ({ onAuth }: { onAuth: () => void }) => {
               disabled={loading}
             >
               {loading ? "Loading..." : isSignup ? "Sign Up" : "Login"}
+            </Button>
+            <Button
+              block
+              type="default"
+              size="large"
+              variant="outlined"
+              color="purple"
+              shape="default"
+              onClick={() => {
+                localStorage.setItem("isGuest", "true");
+                onAuth();
+              }}
+            >
+              Continue as Guest
             </Button>
             {isSignup ? (
               <p>
